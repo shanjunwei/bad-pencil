@@ -71,6 +71,10 @@ public class HitDoc {
             hitDoc.setTitle(fileNameWithoutSuffix(file));
             return this;
         }
+        public HitDocBuilder title(String title) {
+            hitDoc.setTitle(title);
+            return this;
+        }
         public HitDocBuilder score(float score) {
             hitDoc.setScore(score);
             return this;
