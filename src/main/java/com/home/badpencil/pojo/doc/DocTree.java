@@ -1,5 +1,5 @@
 package com.home.badpencil.pojo.doc;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.home.badpencil.utils.FileUtil;
 import lombok.Data;
 import java.io.File;
@@ -13,11 +13,12 @@ public class DocTree {
     // 文件夹或者文件名
     private String title;
     private List<DocTree> children;
+    @JsonProperty(value = "isLeaf")
     private boolean isLeaf;
     private File path;
 
     public DocTree(File file) {
-        this.title = fileNameWithoutSuffix(file);
+        this.title = HitDoc.fileNameWithoutSuffix(file);
         this.children = new ArrayList<>();
         this.isLeaf = !file.isDirectory();
         this.path = file;
@@ -38,10 +39,10 @@ public class DocTree {
             }
         }
     }
-
-    public static String fileNameWithoutSuffix(File file) {
-        if(file == null ) return "";
-        if(file.isDirectory())  return  file.getName();
-        return file.getName().substring(0,file.getName().lastIndexOf("."));
+    public boolean getIsLeaf() {
+        return isLeaf;
+    }
+    public void setIsLeaf(boolean leaf) {
+        isLeaf = leaf;
     }
 }

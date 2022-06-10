@@ -5,15 +5,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.search.highlight.Highlighter;
-
+import java.io.File;
 import java.io.StringReader;
-
 /**
  *  返回的文档
  */
 @Data
 public class HitDoc {
     private String fullText;
+    private String title;
     private String summary;
     private float score;
     private String categoryPath;
@@ -29,6 +29,23 @@ public class HitDoc {
             ex.printStackTrace();
         }
         return "";
+    }
+    /**
+     *  获取类目结构
+     */
+    public static String categoryPath(String path) {
+        int begin = path.indexOf("bad-pencil/") + "bad-pencil/".length();
+        int end = path.lastIndexOf("/");
+        if (begin >= end) {
+            return "";
+        } else {
+            return path.substring(begin, end);
+        }
+    }
+    public static String fileNameWithoutSuffix(File file) {
+        if(file == null ) return "";
+        if(file.isDirectory())  return  file.getName();
+        return file.getName().substring(0,file.getName().lastIndexOf("."));
     }
 
     public static final class HitDocBuilder {
@@ -46,24 +63,20 @@ public class HitDoc {
             hitDoc.setFullText(fullText);
             return this;
         }
-
         public HitDocBuilder summary(String summary) {
             hitDoc.setSummary(summary);
             return this;
         }
-
+        public HitDocBuilder title(File file) {
+            hitDoc.setTitle(fileNameWithoutSuffix(file));
+            return this;
+        }
         public HitDocBuilder score(float score) {
             hitDoc.setScore(score);
             return this;
         }
         public HitDocBuilder categoryPath(String path) {
-            int begin = path.indexOf("bad-pencil/")+"bad-pencil/".length();
-            int end = path.lastIndexOf("/");
-            if (begin >= end) {
-                hitDoc.setCategoryPath("");
-            } else {
-                hitDoc.setCategoryPath(path.substring(path.indexOf("bad-pencil/") + "bad-pencil/".length(), path.lastIndexOf("/")));
-            }
+            hitDoc.setCategoryPath(HitDoc.categoryPath(path));
             return this;
         }
 

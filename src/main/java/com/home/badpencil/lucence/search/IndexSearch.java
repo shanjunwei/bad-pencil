@@ -94,6 +94,7 @@ public class IndexSearch {
             String text = doc.get(FieldName.text.name());
             resDocs.addDoc(HitDoc.HitDocBuilder.aHitDoc().fullText(text)
                     .summary(HitDoc.generateSummary(text,analyzer,highlighter))
+                    .title(doc.get(FieldName.filename.name()))
                     .score(scoreDoc.score).categoryPath(doc.get(FieldName.filepath.name()))
                     .build());
         }

@@ -1,5 +1,4 @@
 package com.home.badpencil.controller;
-
 import com.home.badpencil.lucence.index.IndexDao;
 import com.home.badpencil.pojo.api.ApiResult;
 import com.home.badpencil.pojo.doc.DocTree;
@@ -12,22 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 @RestController
 @Api(tags = "运维")
 @RequestMapping("v1")
 public class DevOpsController {
     @Autowired
     DocService DocService;
-
     private static final Logger logger = LoggerFactory.getLogger(DevOpsController.class);
-
     private IndexDao indexDao  = new IndexDao();
-    @GetMapping("/hello")
-    @ApiOperation("hello")
-    public ApiResult<String> hello() {
-        return ApiResult.call(() -> ApiResult.okWithMsg("hello spring!"), logger);
-    }
 
     @GetMapping("/index")
     @ApiOperation("索引指定目录所有文档")
