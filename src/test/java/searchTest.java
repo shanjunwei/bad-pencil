@@ -1,8 +1,6 @@
 import com.alibaba.fastjson.JSONObject;
 import com.home.badpencil.constans.Constants;
 import com.home.badpencil.lucence.index.IndexDao;
-import com.home.badpencil.lucence.search.IndexSearch;
-import com.home.badpencil.pojo.api.doc.ResDocs;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -13,14 +11,30 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 public class searchTest {
+    @Test
+    public void testIndex() throws Exception {
+        IndexDao indexDao = new IndexDao();
+        indexDao.createIndex(Constants.DOC_PATH);
+    }
+
+    @Test
+    public void test1() throws Exception {
+        String path = "/Users/shanjunwei/Data/bad-pencil/微服务.md";
+        int begin = path.indexOf("bad-pencil/")+"bad-pencil/".length();
+        int end = path.lastIndexOf("/");
+
+        if(begin >= end) System.out.println("=====");
+        System.out.println( path.substring(begin,end));
+
+    }
 
     @Test
     public void testSearch() throws Exception {
-//        IndexDao indexDao = new IndexDao();
-//        indexDao.createIndex("/Users/shanjunwei/Data/BadPencil/");
-        IndexSearch indexSearch = new IndexSearch();
-        ResDocs topDocs = indexSearch.search("密集");
-        System.out.println(JSONObject.toJSONString(topDocs));
+        IndexDao indexDao = new IndexDao();
+        indexDao.createIndex("/Users/shanjunwei/Data/BadPencil/");
+//        IndexSearch indexSearch = new IndexSearch();
+//        ResDocs topDocs = indexSearch.search("密集");
+//        System.out.println(JSONObject.toJSONString(topDocs));
     }
 
     /**
@@ -43,6 +57,4 @@ public class searchTest {
         }
         indexReader.close();
     }
-
-
 }

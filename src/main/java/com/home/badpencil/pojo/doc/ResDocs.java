@@ -1,4 +1,4 @@
-package com.home.badpencil.pojo.api.doc;
+package com.home.badpencil.pojo.doc;
 
 import lombok.Data;
 

@@ -2,7 +2,8 @@ package com.home.badpencil.lucence.index;
 
 import com.hankcs.lucene.HanLPIndexAnalyzer;
 import com.home.badpencil.constans.Constants;
-import com.home.badpencil.pojo.api.doc.FieldName;
+import com.home.badpencil.pojo.doc.FieldName;
+import com.home.badpencil.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -12,7 +13,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,18 +26,12 @@ import java.util.Queue;
  * 执行索引操作
  */
 public class IndexDao {
-    public static final String CONTENTS = "contents";
-    public static final String FILE_NAME = "filename";
-    public static final String FILE_PATH = "filepath";
     private IndexWriterConfig indexWriterConfig;
-    private MyFileFilter myFileFilter;
     private Directory indexDirectory;
     public IndexDao() {
         try {
             // 该路径持久化索引
             indexDirectory = MMapDirectory.open(Paths.get(Constants.LUCENE_INDEX_PATH));
-            // 索引输出流
-            myFileFilter = new MyFileFilter();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,7 +41,7 @@ public class IndexDao {
      */
     private Document getDocument(File file) throws IOException {
         Document document = new Document();
-        //index file contents
+        //index file contents   这里文件的重复由文件系统路径决定,不同路径下重复文件es不会去重处理
         Field contentField = new TextField(FieldName.contents.name(), new FileReader(file));
         //index file name
         Field fileNameField = new TextField(FieldName.filename.name(), file.getName(), Field.Store.YES);
@@ -86,7 +80,7 @@ public class IndexDao {
             if (file.isDirectory() && file.listFiles() != null) {
                 Collections.addAll(queue, Objects.requireNonNull(file.listFiles()));
             } else {
-                if (myFileFilter.accept(file)) {
+                if (FileUtil.isMarkDown(file)) {
                     indexFile(indexWriter, file);
                     totalIndexCnt++;
                 }
@@ -95,13 +89,6 @@ public class IndexDao {
         indexWriter.close();
         indexWriter = null; // help gc
         return totalIndexCnt;
-    }
-
-    public class MyFileFilter implements FileFilter {
-        @Override
-        public boolean accept(File file) {
-            return !file.isHidden() && file.exists() && file.canRead() && file.getName().toLowerCase().endsWith(".md");
-        }
     }
 
     private IndexWriterConfig getIndexWriterConf() throws IOException {

@@ -1,13 +1,11 @@
-package com.home.badpencil.pojo.api.doc;
+package com.home.badpencil.pojo.doc;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
-import java.io.IOException;
 import java.io.StringReader;
 
 /**
@@ -18,9 +16,7 @@ public class HitDoc {
     private String fullText;
     private String summary;
     private float score;
-    private String category1;
-    private String category2;
-    private String category3;
+    private String categoryPath;
     /**
      *  生成高亮文本
      */
@@ -60,19 +56,14 @@ public class HitDoc {
             hitDoc.setScore(score);
             return this;
         }
-
-        public HitDocBuilder category1(String category1) {
-            hitDoc.setCategory1(category1);
-            return this;
-        }
-
-        public HitDocBuilder category2(String category2) {
-            hitDoc.setCategory2(category2);
-            return this;
-        }
-
-        public HitDocBuilder category3(String category3) {
-            hitDoc.setCategory3(category3);
+        public HitDocBuilder categoryPath(String path) {
+            int begin = path.indexOf("bad-pencil/")+"bad-pencil/".length();
+            int end = path.lastIndexOf("/");
+            if (begin >= end) {
+                hitDoc.setCategoryPath("");
+            } else {
+                hitDoc.setCategoryPath(path.substring(path.indexOf("bad-pencil/") + "bad-pencil/".length(), path.lastIndexOf("/")));
+            }
             return this;
         }
 

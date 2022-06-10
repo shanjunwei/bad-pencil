@@ -2,9 +2,9 @@ package com.home.badpencil.lucence.search;
 
 import com.hankcs.lucene.HanLPIndexAnalyzer;
 import com.home.badpencil.constans.Constants;
-import com.home.badpencil.pojo.api.doc.FieldName;
-import com.home.badpencil.pojo.api.doc.HitDoc;
-import com.home.badpencil.pojo.api.doc.ResDocs;
+import com.home.badpencil.pojo.doc.FieldName;
+import com.home.badpencil.pojo.doc.HitDoc;
+import com.home.badpencil.pojo.doc.ResDocs;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -92,7 +92,10 @@ public class IndexSearch {
             //scoreDoc.doc相当于docID,根据这个docID来获取文档
             Document doc = currentIndexSearcher.doc(scoreDoc.doc);
             String text = doc.get(FieldName.text.name());
-            resDocs.addDoc(HitDoc.HitDocBuilder.aHitDoc().fullText(text).summary(HitDoc.generateSummary(text,analyzer,highlighter)).score(scoreDoc.score).build());
+            resDocs.addDoc(HitDoc.HitDocBuilder.aHitDoc().fullText(text)
+                    .summary(HitDoc.generateSummary(text,analyzer,highlighter))
+                    .score(scoreDoc.score).categoryPath(doc.get(FieldName.filepath.name()))
+                    .build());
         }
         return resDocs;
     }
