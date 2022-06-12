@@ -36,7 +36,7 @@ public class IndexSearch {
             // 使用hanLp分词器
             analyzer = new HanLPIndexAnalyzer();
             //如果不指定参数的话，默认是加粗，即<b><b/>
-            simpleHTMLFormatter = new SimpleHTMLFormatter("<b><font color=red>", "</font></b>");
+            simpleHTMLFormatter = new SimpleHTMLFormatter("<mark class='highlight'>", "</mark>");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,19 +69,13 @@ public class IndexSearch {
         QueryParser parser = new QueryParser(FieldName.contents.name(), analyzer);
         //通过解析要查询的String，获取查询对象，q为传进来的待查的字符串
         Query query = parser.parse(searchQuery);
-        //记录索引开始时间
-        long startTime = System.currentTimeMillis();
         //开始查询，查询前10条数据，将记录保存在docs中
         IndexSearcher currentIndexSearcher = getSearcher();
         TopDocs docs = currentIndexSearcher.search(query, MAX_SEARCH);
-        //记录索引结束时间
-        long endTime = System.currentTimeMillis();
-        System.out.println("匹配" + searchQuery + "共耗时" + (endTime-startTime) + "毫秒");
-        System.out.println("查询到" + docs.totalHits + "条记录");
         //根据查询对象计算得分，会初始化一个查询结果最高的得分
         QueryScorer scorer = new QueryScorer(query);
         //根据这个得分计算出一个片段
-        Fragmenter fragmenter = new SimpleSpanFragmenter(scorer);
+        Fragmenter fragmenter = new SimpleSpanFragmenter(scorer,400);
         //将这个片段中的关键字用上面初始化好的高亮格式高亮
         Highlighter highlighter = new Highlighter(simpleHTMLFormatter, scorer);
         //设置一下要显示的片段
@@ -94,7 +88,7 @@ public class IndexSearch {
             String text = doc.get(FieldName.text.name());
             resDocs.addDoc(HitDoc.HitDocBuilder.aHitDoc().fullText(text)
                     .summary(HitDoc.generateSummary(text,analyzer,highlighter))
-                    .title(doc.get(FieldName.filename.name()))
+                    .title(doc.get(FieldName.filename.name())).path(doc.get(FieldName.filepath.name()))
                     .score(scoreDoc.score).categoryPath(doc.get(FieldName.filepath.name()))
                     .build());
         }

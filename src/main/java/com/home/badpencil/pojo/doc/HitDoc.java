@@ -17,6 +17,7 @@ public class HitDoc {
     private String summary;
     private float score;
     private String categoryPath;
+    private String path;
     /**
      *  生成高亮文本
      */
@@ -73,6 +74,10 @@ public class HitDoc {
         }
         public HitDocBuilder title(String title) {
             hitDoc.setTitle(title);
+            return this;
+        }
+        public HitDocBuilder path(String path) {
+            hitDoc.setPath(path);
             return this;
         }
         public HitDocBuilder score(float score) {
